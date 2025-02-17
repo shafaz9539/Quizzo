@@ -25,13 +25,16 @@ export function LoginForm({
     const password = formData.get("password") as string;
 
     try {
-      const response = await axios.post(`http://localhost:3000/auth/api/v1/login`, { email, password });
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, { email, password });
       navigate("/dashboard", { state: { id: response.data.id, name: response.data.name } });
       console.log("Response from login:", response.data.message);
       toast.success(response.data.message)
     } catch (err) {
-      toast.error(`${err.response.data.message}`);
-      console.error("Error: ", err.response.data.message);
+      if (axios.isAxiosError(err) && err.response) {
+        toast.error(`${err.response.data.message}`);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     }
   };
 

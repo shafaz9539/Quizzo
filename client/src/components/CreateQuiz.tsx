@@ -24,14 +24,18 @@ export default function CreateQuiz(props: {teacherId: number; refreshQuizzes: ()
     const description = formData.get("description") as string;
     try {
       const { teacherId } = props;
-      await axios.post(`http://localhost:3000/auth/api/v1/quizzes`, {title, description, teacherId});
+      await axios.post(`${import.meta.env.VITE_API_URL}/quizzes`, {title, description, teacherId});
       console.log("Quiz created successfully");
       toast.success("Quiz created successfully");
       setIsOpen(false); 
       props.refreshQuizzes(); 
     } catch (err) {
       console.error("Error updating quiz:", err);
-      toast.error(`${err.response.data.message}`);
+      if (axios.isAxiosError(err) && err.response) {
+        toast.error(`${err.response.data.message}`);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     }
   }
 

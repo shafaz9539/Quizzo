@@ -30,7 +30,7 @@ function Dashboard() {
 
   const fetchQuizzes = async () => {
     await axios
-      .get(`http://localhost:3000/auth/api/v1/quizzes/teacherID/${teacherId}`)
+      .get(`${import.meta.env.VITE_API_URL}/quizzes/teacherID/${teacherId}`)
       .then((response) => {
         setQuizzes(response.data);
       })
@@ -45,12 +45,16 @@ function Dashboard() {
 
   const deleteQuiz = async (id: number) => {
     try {
-      await axios.delete(`http://localhost:3000/auth/api/v1/quizzes/${id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/quizzes/${id}`);
       toast.success("Quiz deleted successfully");
       fetchQuizzes();
-    } catch (error) {
-      console.error("Error deleting quiz:", error);
-      toast.error(`${error.response.data.message}`);
+    } catch (err) {
+      if (axios.isAxiosError(err) && err.response) {
+        toast.error(`${err.response.data.message}`);
+        console.error("Error: ", err.response.data.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     }
   };
 
@@ -61,7 +65,7 @@ function Dashboard() {
       <TableCell>{quiz.description}</TableCell>
       <TableCell>{quiz.teacher_id}</TableCell>
       <TableCell className="flex flex-col gap-2 lg:flex-row">
-        <PopUp 
+        <PopUp
           title={quiz.title}
           teacherId={quiz.teacher_id}
           description={quiz.description}

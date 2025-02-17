@@ -46,13 +46,17 @@ export function PopUp(props: PopUpProps) {
     }
 
     try {
-      await axios.put(`http://localhost:3000/auth/api/v1/quizzes/${props.id}`, quiz);
+      await axios.put(`${import.meta.env.VITE_API_URL}/quizzes/${props.id}`, quiz);
       setIsOpen(false); 
       props.refreshQuizzes();
       toast.success("Quiz updated successfully");
     } catch (err) {
       console.error("Error updating quiz:", err);
-      toast.error(`${err.response.data.message}`);
+      if (axios.isAxiosError(err) && err.response) {
+        toast.error(`${err.response.data.message}`);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     }
   }
 

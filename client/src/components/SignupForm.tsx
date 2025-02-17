@@ -27,7 +27,7 @@ export function SignupForm({
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/auth/api/v1/signup`, { name, email, password }
+        `${import.meta.env.VITE_API_URL}/signup`, { name, email, password }
       );
       navigate("/dashboard", {
         state: { id: response.data.user.id, name: response.data.user.name },
@@ -35,8 +35,13 @@ export function SignupForm({
       console.log("Response from Signup:", response.data.message);
       toast.success(response.data.message)
     } catch (err) {
+      if (axios.isAxiosError(err) && err.response) {
         toast.error(`${err.response.data.message}`);
         console.error("Error: ", err.response.data.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+        
     }
   };
 

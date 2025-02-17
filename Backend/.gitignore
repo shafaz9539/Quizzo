@@ -2,6 +2,7 @@
 node_modules/
 npm-debug.log
 yarn-error.log
+dist/
 
 # Logs
 logs/
@@ -69,3 +70,4 @@ bower_components/
 
 # Windows system files
 Thumbs.db
+
